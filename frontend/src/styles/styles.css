@@ -1,0 +1,109 @@
+
+/* TechniqueCardStyles */
+
+.customCard {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+  border: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.customCardTitle {
+  font-weight: bold;
+}
+
+@media (min-width: 992px) {
+  .customCard {
+    height: 250px;
+  }
+}
+
+
+/* RegisterStyles */
+
+.formCard {
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  margin-top: 2rem;
+  height: auto;
+  border: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+.registerContainer {
+  width: 70%;
+  height: 100vh;
+  margin-top: 4rem;
+}
+
+.hidePasswordButton {
+  font-weight: bold;
+  background: #ffffff;
+  border-color: #000000;
+  color: #000000;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+.rounded-left {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.registerButton {
+  font-weight: bold;
+  background: var(--background);
+  color: var(--text-primary);
+  width: auto;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: var(--navcolour);
+    color: var(--text-primary);
+  }
+}
+
+.loginButton {
+  border-radius: 4px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  width: 10%;
+  background: var(--background);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: var(--background);
+    color: #808080;
+  }
+}
+
+/* TitleStyles */
+
+.customTitle {
+  margin: 50px 0 50px 0;
+  font-weight: bold;
+  text-align: center;
+  color: var(--text-primary);
+  transition: all 0.2s ease-in-out;
+}
+
+/* ReactHelperStyles*/
+
+/* Global Styles*/
+
+body {
+  background-color: var(--background); 
+  transition: all 0.2s ease-in-out;
+}

@@ -1,4 +1,4 @@
-package dev.tomgill.webapplication;
+package dev.tomgill.webapplication.User;
 
 import java.util.Optional;
 

@@ -1,7 +1,8 @@
-package dev.tomgill.webapplication;
+package dev.tomgill.webapplication.User;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -17,10 +18,14 @@ public class User {
   private ObjectId id;
   private String firstName;
   private String lastName;
-  private String userName;
   private String password;
-  private String email;
   private String userId;
+
+  @Indexed(unique=true)
+  private String userName;
+
+  @Indexed(unique=true)
+  private String email;
 
   public User(String firstName, String lastName, String userName, String password, String email) {
     this.firstName = firstName;

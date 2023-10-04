@@ -1,4 +1,4 @@
-package dev.tomgill.webapplication;
+package dev.tomgill.webapplication.User;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import dev.tomgill.webapplication.Exceptions.DuplicateUserField;
 
 @RestController
 @CrossOrigin
@@ -38,8 +40,13 @@ public class UserController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<User> createUser(@RequestBody Map<String, String> payload) {
-    return new ResponseEntity<User>(userService.createUser(payload.get("firstName"), payload.get("lastName"), payload.get("userName"), payload.get("password"), payload.get("email")), HttpStatus.CREATED);
+  public ResponseEntity<?> createUser(@RequestBody Map<String, String> payload) {
+    try {
+      User user = userService.createUser(payload.get("firstName"), payload.get("lastName"), payload.get("userName"), payload.get("password"), payload.get("email"));
+      return new ResponseEntity<User>(user, HttpStatus.OK);
+    } catch (DuplicateUserField error) {
+      return new ResponseEntity<String>("Error", HttpStatus.CONFLICT);
+    }
   }
 
   // @PostMapping("/")

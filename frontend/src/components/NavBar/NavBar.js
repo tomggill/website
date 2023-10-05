@@ -30,9 +30,6 @@ const Navbar = () => {
           <NavLink to='/about'>
             About
           </NavLink>
-          <NavLink to='/to-do'>
-          To-Do
-          </NavLink>
           <NavLink to='/annual'>
             Annual Report
           </NavLink>

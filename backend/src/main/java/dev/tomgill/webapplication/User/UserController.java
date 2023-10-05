@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,11 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import dev.tomgill.webapplication.Exceptions.DuplicateUserField;
-
 @RestController
 @CrossOrigin
-@RequestMapping("/api/user-entries")
+@RequestMapping("/api/user-details")
 public class UserController {
   @Autowired
   private UserService userService;
@@ -39,33 +38,13 @@ public class UserController {
     return new ResponseEntity<Optional<User>>(userService.singleUser(userName), HttpStatus.OK);
   }
 
-  @PostMapping("/create")
+  @PostMapping("/register")
   public ResponseEntity<?> createUser(@RequestBody Map<String, String> payload) {
     try {
       User user = userService.createUser(payload.get("firstName"), payload.get("lastName"), payload.get("userName"), payload.get("password"), payload.get("email"));
       return new ResponseEntity<User>(user, HttpStatus.OK);
-    } catch (DuplicateUserField error) {
-      return new ResponseEntity<String>("Error", HttpStatus.CONFLICT);
+    } catch (DuplicateKeyException error) {
+      return new ResponseEntity<String>(error.toString(), HttpStatus.CONFLICT);
     }
   }
-
-  // @PostMapping("/")
-  // User getUser(@RequestBody User user) {
-  //   return userRepository.save(user);
-  // }
-
-  // @PutMapping("/{id}")
-  // User getUser(@PathVariable String id, @RequestBody User user) {
-  //   User oldUser = userRepository.findById(id).orElse(null);
-  //   oldUser.setName(user.getName());
-  //   oldUser.setEmail(user.getEmail());
-  //   oldUser.setPassword(user.getPassword());
-  //   return userRepository.save(oldUser);
-  // }
-
-  // @DeleteMapping("/{id}")
-  // String deleteUser(@PathVariable String id) {
-  //   userRepository.deleteById(id);
-  //   return id;
-  // }
 }

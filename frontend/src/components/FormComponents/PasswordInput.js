@@ -3,8 +3,10 @@ import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai'
 import {Col, Form, InputGroup, Button} from 'react-bootstrap'
 import "../../styles/styles.css"
 
-const PasswordInput = ({label, controlId, errorText, validationFunction, formSubmitted, password, setPassword}) => {
+const PasswordInput = ({label, controlId, errorText = "", validationFunction, formSubmitted = true, password, setPassword}) => {
   const [passwordShown, setPasswordShown] = useState(false);
+  const isValidProp = validationFunction ? { isValid: validationFunction(password) && formSubmitted} : {};
+  const isInvalidPop = validationFunction ? { isInvalid: !validationFunction(password) && formSubmitted} : {};
 
   const togglePassword = () => {
     setPasswordShown(!passwordShown);
@@ -19,8 +21,8 @@ const PasswordInput = ({label, controlId, errorText, validationFunction, formSub
           required
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 
-          isValid={validationFunction(password) && formSubmitted}
-          isInvalid={!validationFunction(password) && formSubmitted}
+          {...isValidProp}
+          {...isInvalidPop}
           type={passwordShown ? "text" : "password"} 
           autoComplete="on"
           placeholder={label} 

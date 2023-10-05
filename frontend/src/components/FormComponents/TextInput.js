@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import {Col, Form} from 'react-bootstrap';
 import "../../styles/styles.css";
 
-const TextInput = ({label, controlId, errorText, validationFunction, formSubmitted, input, setInput}) => {
+const TextInput = ({label, controlId, errorText = "", validationFunction, formSubmitted = true, input, setInput}) => {
+  const isValidProp = validationFunction ? { isValid: validationFunction(input) && formSubmitted} : {};
+  const isInvalidPop = validationFunction ? { isInvalid: !validationFunction(input) && formSubmitted} : {};
 
   return (
     <Form.Group as={Col} md="3" controlId={controlId}>
@@ -11,8 +13,8 @@ const TextInput = ({label, controlId, errorText, validationFunction, formSubmitt
         required
         value={input} 
         onChange={(e) => setInput(e.target.value)} 
-        isValid={validationFunction(input) && formSubmitted}
-        isInvalid={!validationFunction(input) && formSubmitted}
+        {...isValidProp}
+        {...isInvalidPop}
         type="text"
         placeholder={label}
       />

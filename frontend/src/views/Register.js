@@ -7,7 +7,7 @@ import TextInput from '../components/FormComponents/TextInput';
 import TextInputGroup from '../components/FormComponents/TextInputGroup';
 import Title from "../components/Title/Title";
 import "../styles/styles.css";
-import { EMAIL_REGEX, PASSWORD_REGEX } from '../utils/regex';
+import { EMAIL_REGEX, PASSWORD_REGEX, EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX } from '../utils/regex';
 
 const Register = () => {
   const [success, setSuccess] = useState(false);
@@ -33,7 +33,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await api.post("api/user-entries/create",
+      const response = await api.post("api/user-details/register",
         JSON.stringify({firstName, lastName, userName, password, email}),
         {
           headers: {'Content-Type': 'application/json'}
@@ -42,7 +42,8 @@ const Register = () => {
       setSuccess(true);
       console.log(JSON.stringify(response));
     } catch (error) {
-      console.log(error);
+      const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
+      console.log(fieldEntryAlreadyInUse);
     }
   };
 
@@ -96,6 +97,10 @@ const Register = () => {
             <Button className="registerButton" md="2" type="submit" >Register</Button>
           </Row>
         </Form>
+        <Row className="justify-content-md-center mb-3">
+          <p style={{textAlign: "center", marginBottom: "0"}}>Already have an account?</p>
+          <Link className="registerLink line" to="/login">Sign-In</Link>
+        </Row>
       </Card>
     </Container>
     )}

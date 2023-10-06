@@ -33,7 +33,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.registerContainer {
+.customContainer {
   width: 70%;
   height: 100vh;
   margin-top: 4rem;
@@ -111,7 +111,7 @@
   }
 }
 
-.registerLink {
+.redirectLink {
   font-weight: bold;
   display: flex;
   justify-content: center;

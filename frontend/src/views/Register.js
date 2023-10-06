@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import api from '../api/axiosConfig';
+import axios from '../api/axiosConfig';
 import PasswordInput from '../components/FormComponents/PasswordInput';
 import TextInput from '../components/FormComponents/TextInput';
 import TextInputGroup from '../components/FormComponents/TextInputGroup';
@@ -33,7 +33,7 @@ const Register = () => {
       return;
     }
     try {
-      const response = await api.post("api/user-details/register",
+      const response = await axios.post("api/user-details/register",
         JSON.stringify({firstName, lastName, userName, password, email}),
         {
           headers: {'Content-Type': 'application/json'}
@@ -42,8 +42,9 @@ const Register = () => {
       setSuccess(true);
       console.log(JSON.stringify(response));
     } catch (error) {
-      const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
-      console.log(fieldEntryAlreadyInUse);
+      console.log(error);
+      // const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
+      // console.log(fieldEntryAlreadyInUse);
     }
   };
 
@@ -70,16 +71,16 @@ const Register = () => {
   return (
     <>
     {success ? (
-      <Container className="registerContainer justify-content-md-center">
+      <Container className="customContainer justify-content-md-center">
         <Card className="formCard mb-3">
           <Title title="Your account has been registered!"/>
           <Row className="justify-content-md-center mb-3">
-            <Link className="loginButton" md="2" to="/login">Login</Link>
+            <Link className="redirectLink line" to="/login">Sign-In</Link>
           </Row>
         </Card>
       </Container>
     ) : (
-    <Container className="registerContainer justify-content-md-center">
+    <Container className="customContainer justify-content-md-center">
       <Card className="formCard mb-3">
         <Title title="Create an Account" />
         <Form noValidate onSubmit={handleSubmit}>
@@ -99,7 +100,7 @@ const Register = () => {
         </Form>
         <Row className="justify-content-md-center mb-3">
           <p style={{textAlign: "center", marginBottom: "0"}}>Already have an account?</p>
-          <Link className="registerLink line" to="/login">Sign-In</Link>
+          <Link className="redirectLink line" to="/login">Sign-In</Link>
         </Row>
       </Card>
     </Container>

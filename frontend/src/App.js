@@ -11,21 +11,6 @@ export function App() {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
 
-  // const [users, setUsers] = useState();
-
-  // const getUsers = async () => {
-  //   try {
-  //     const response = await api.get("/api/user-details");
-  //     console.log(response.data);
-  //     setUsers(response.data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-  // useEffect(() => {
-  //   getUsers();
-  // }, [])
-
   return (
     <body className="app" data-theme={theme}>
       <Router>

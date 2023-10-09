@@ -36,15 +36,15 @@ const Register = () => {
       const response = await axios.post("api/user-details/register",
         JSON.stringify({firstName, lastName, userName, password, email}),
         {
-          headers: {'Content-Type': 'application/json'}
+          headers: {'Content-Type': 'application/json'
+                  }
         }
       );
       setSuccess(true);
       console.log(JSON.stringify(response));
     } catch (error) {
-      console.log(error);
-      // const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
-      // console.log(fieldEntryAlreadyInUse);
+      const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
+      console.log(fieldEntryAlreadyInUse);
     }
   };
 

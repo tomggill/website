@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.tomgill.webapplication.exceptions.TokenRefreshException;
 import dev.tomgill.webapplication.models.ERole;
+import dev.tomgill.webapplication.models.RefreshToken;
 import dev.tomgill.webapplication.models.Role;
 import dev.tomgill.webapplication.models.User;
 import dev.tomgill.webapplication.payload.request.LoginRequest;
@@ -37,6 +40,7 @@ import dev.tomgill.webapplication.payload.response.UserInfoResponse;
 import dev.tomgill.webapplication.repository.RoleRepository;
 import dev.tomgill.webapplication.repository.UserRepository;
 import dev.tomgill.webapplication.security.jwt.JwtUtils;
+import dev.tomgill.webapplication.security.services.RefreshTokenService;
 import dev.tomgill.webapplication.security.services.UserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -58,6 +62,9 @@ public class AuthController {
   @Autowired
   JwtUtils jwtUtils;
 
+  @Autowired
+  RefreshTokenService refreshTokenService;
+
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
@@ -74,11 +81,16 @@ public class AuthController {
         .map(item -> item.getAuthority())
         .collect(Collectors.toList());
 
+    RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+    ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
+
     String accessToken = jwtUtils.generateTokenFromUsername(userDetails.getUsername());
 
-
-    return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-        .body(new UserInfoResponse(userDetails.getId(),
+    return ResponseEntity.status(HttpStatus.OK)
+                          .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                          .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                          .body(new UserInfoResponse(userDetails.getId(),
                                    userDetails.getFirstname(),
                                    userDetails.getLastname(),
                                    userDetails.getUsername(),
@@ -148,5 +160,44 @@ public class AuthController {
     userRepository.save(user);
 
     return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("User registered successfully!"));
+  }
+
+  @PostMapping("/signout")
+  public ResponseEntity<?> signoutUser() {
+    Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    if (principle.toString() != "anonymousUser") {      
+      String userId = ((UserDetailsImpl) principle).getId();
+      refreshTokenService.deleteByUserId(userId);
+    }
+    
+    ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
+    ResponseCookie jwtRefreshCookie = jwtUtils.getCleanJwtRefreshCookie();
+
+    return ResponseEntity.status(HttpStatus.OK)
+        .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+        .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+        .body(new MessageResponse("You've been signed out!"));
+  }
+
+  @PostMapping("/refreshtoken")
+  public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
+    String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
+    
+    if ((refreshToken != null) && (refreshToken.length() > 0)) {
+      return refreshTokenService.findByToken(refreshToken)
+          .map(refreshTokenService::verifyExpiration)
+          .map(RefreshToken::getUser)
+          .map(user -> {
+            ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
+            
+            return ResponseEntity.status(HttpStatus.OK)
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(new MessageResponse("Token is refreshed successfully!"));
+          })
+          .orElseThrow(() -> new TokenRefreshException(refreshToken,
+              "Refresh token is not in database!"));
+    }
+    
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Refresh Token is empty!"));
   }
 }

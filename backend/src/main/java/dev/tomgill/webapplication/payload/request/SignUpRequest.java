@@ -1,54 +1,35 @@
 package dev.tomgill.webapplication.payload.request;
 
+import java.io.Serializable;
 import java.util.Set;
 
+import dev.tomgill.webapplication.payload.validation.password.ValidPassword;
 import jakarta.validation.constraints.*;
+import lombok.Data;
 
-public class SignUpRequest {
-  @NotBlank
-  @Size(min = 3, max = 20)
+@Data
+public class SignUpRequest implements Serializable {
+  @NotBlank(message = "First Name field must not be blank.")
+  @Size(min = 3, max = 20, message = "First Name must be between 3-20 characters.")
+  private String firstname;
+
+  @NotBlank(message = "Last Name field must not be blank.")
+  @Size(min = 3, max = 20, message = "Last Name must be between 3-20 characters.")
+  private String lastname;
+
+  @NotBlank(message = "Username field must not be blank.")
+  @Size(min = 3, max = 20, message = "Username must be between 3-20 characters.")
   private String username;
 
-  @NotBlank
-  @Size(max = 50)
-  @Email
+  @NotBlank(message = "Email field must not be blank.")
+  @Size(max = 50, message = "Email must be fewer than 50 characters.")
+  @Email(message = "You must use a valid email.")
   private String email;
 
   private Set<String> roles;
 
-  @NotBlank
-  @Size(min = 6, max = 40)
+  // @NotBlank(message = "Password field must not be blank.")
+  // @Size(min = 6, max = 120, message = "Password must be between 8-120 characters.")
+  @ValidPassword
   private String password;
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public Set<String> getRoles() {
-    return this.roles;
-  }
-
-  public void setRole(Set<String> roles) {
-    this.roles = roles;
-  }
 }

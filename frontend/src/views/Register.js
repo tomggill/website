@@ -15,26 +15,26 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [userName, setUserName] = useState("");
+  const [firstname, setFirstName] = useState("");
+  const [lastname, setLastName] = useState("");
+  const [username, setUserName] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const validPassword = validatePassword(password);
     const validConfirmPassword = validateConfirmPassword(confirmPassword);
     const validEmail = validateEmail(email);
-    const validFirstName = validateName(firstName);
-    const validLastName = validateName(lastName);
-    const validUserName = validateUserName(userName);
+    const validFirstName = validateName(firstname);
+    const validLastName = validateName(lastname);
+    const validUserName = validateUserName(username);
 
     setFormSubmitted(true);
     if (!validPassword || !validEmail || !validConfirmPassword || !validFirstName || !validLastName || !validUserName) {
       return;
     }
     try {
-      const response = await axios.post("api/user-details/register",
-        JSON.stringify({firstName, lastName, userName, password, email}),
+      const response = await axios.post("api/auth/signup",
+        JSON.stringify({firstname, lastname, username, password, email}),
         {
           headers: {'Content-Type': 'application/json'
                   }
@@ -43,17 +43,18 @@ const Register = () => {
       setSuccess(true);
       console.log(JSON.stringify(response));
     } catch (error) {
-      const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
-      console.log(fieldEntryAlreadyInUse);
+      console.log(error);
+      // const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
+      // console.log(fieldEntryAlreadyInUse);
     }
   };
 
   const validateName = (name) => {
-    return (name.trim().length >= 2);
+    return (name.trim().length >= 3);
   };
 
-  const validateUserName = (userName) => {
-    return (userName.trim().length >= 3);
+  const validateUserName = (username) => {
+    return (username.trim().length >= 3);
   };
 
   const validateEmail = (email) => {
@@ -85,9 +86,9 @@ const Register = () => {
         <Title title="Create an Account" />
         <Form noValidate onSubmit={handleSubmit}>
           <Row className="justify-content-md-center mb-3">
-            <TextInput label="First Name" controlId="customValidationFirstName" errorText={"Please enter a valid first name."} validationFunction={validateName} formSubmitted={formSubmitted} input={firstName} setInput={setFirstName}/>
-            <TextInput label="Last Name" controlId="customValidationLastName" errorText={"Please enter a valid last name."} validationFunction={validateName} formSubmitted={formSubmitted} input={lastName} setInput={setLastName}/>
-            <TextInputGroup label="Username" controlId="customValidationUsername" inputGroupID="inputGroupAtPrepend" inputGroupSymbol="@" validationFunction={validateUserName} formSubmitted={formSubmitted} input={userName} setInput={setUserName}/>
+            <TextInput label="First Name" controlId="customValidationFirstName" errorText={"Please enter a valid first name."} validationFunction={validateName} formSubmitted={formSubmitted} input={firstname} setInput={setFirstName}/>
+            <TextInput label="Last Name" controlId="customValidationLastName" errorText={"Please enter a valid last name."} validationFunction={validateName} formSubmitted={formSubmitted} input={lastname} setInput={setLastName}/>
+            <TextInputGroup label="Username" controlId="customValidationUsername" inputGroupID="inputGroupAtPrepend" inputGroupSymbol="@" validationFunction={validateUserName} formSubmitted={formSubmitted} input={username} setInput={setUserName}/>
           </Row>
           <Row className="justify-content-md-center mb-3">
             <TextInput label="Email" controlId="customValidationEmail" errorText={"Please enter a valid email."} validationFunction={validateEmail} formSubmitted={formSubmitted} input={email} setInput={setEmail}/>

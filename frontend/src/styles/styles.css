@@ -66,8 +66,8 @@
   transition: all 0.2s ease-in-out;
   &:hover {
     transition: all 0.2s ease-in-out;
-    background: var(--navcolour);
-    color: var(--text-primary);
+    background: var(--background);
+    color: #808080;
   }
 }
 

@@ -2,10 +2,16 @@ import React from 'react';
 import "./App.css";
 import "./styles/styles.css";
 import Navbar from './components/NavBar/NavBar';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import {About, Login, Annual, Teams, ReactHelper, Register, Home} from "./views/viewDirectory";
+import { Routes, Route } from 'react-router-dom';
+import {About, Login, Annual, Teams, ReactHelper, Register, Home, Missing, Admin, Moderator, Unauthorised} from "./views/viewDirectory";
+import RequireAuth from './components/Auth/RequireAuth';
 import useLocalStorage from 'use-local-storage'
-// import api from './api/axiosConfig';
+
+const ROLES = {
+  'User': "ROLE_USER",
+  'Moderator': "ROLE_MODERATOR",
+  'Admin': "ROLE_ADMIN",
+}
 
 export function App() {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -13,18 +19,27 @@ export function App() {
 
   return (
     <body className="app" data-theme={theme}>
-      <Router>
-        <Navbar/>
-        <Routes>
-          <Route path='/' exact element={<Home />} />
-          <Route path='/about' element={<About />} />
-          <Route path='/annual' element={<Annual />} />
-          <Route path='/team' element={<Teams />} />
-          <Route path='/react-helper' element={<ReactHelper />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/login' element={<Login />} />
-        </Routes>
-      </Router>
+      <Navbar/>
+      <Routes>
+        <Route path='/' exact element={<Home />} />
+        <Route path='/about' element={<About />} />
+        <Route path='/annual' element={<Annual />} />
+        <Route path='/team' element={<Teams />} />
+        <Route path='/react-helper' element={<ReactHelper />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/login' element={<Login />} />
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Moderator]}/>}>
+          <Route path='/moderator' element={<Moderator />} />
+        </Route>
+
+        <Route element={<RequireAuth allowedRoles={[ROLES.Admin]}/>}>
+          <Route path='/admin' element={<Admin />} />
+        </Route>
+
+        <Route path='*' element={<Missing />} />
+        <Route path="/unauthorised" element={<Unauthorised />} />
+      </Routes>
     </body>
   );
 }

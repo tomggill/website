@@ -1,60 +1,69 @@
 
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Container, Card, Form, Row, Col, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Title from "../components/Title/Title"
 import TextInput from '../components/FormComponents/TextInput';
 import PasswordInput from '../components/FormComponents/PasswordInput';
-import AuthContext from '../context/AuthProvider';
+import useAuth from "../hooks/useAuth"
 import axios from '../api/axiosConfig'
 import "../styles/styles.css";
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
 
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const whereUserCameFrom = location.state?.from?.pathname || "/";
+
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const validateEmail = (email) => {
-    return email.trim();
+  const validateUsername = (username) => {
+    return username.trim();
   }
 
   const validatePassword = (password) => {
     return password;
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit =  async (event) => {
     event.preventDefault();
     const validPassword = validatePassword(password);
-    const validEmail = validateEmail(email);
+    const validUsername = validateUsername(username);
 
     setFormSubmitted(true);
-    if (!validPassword || !validEmail) {
+    if (!validPassword || !validUsername) {
       return;
     }
-    setSuccess(true);
+    try {
+      const response = await axios.post("api/auth/signin",
+        JSON.stringify({username, password}),
+        {
+          headers: {'Content-Type': 'application/json'
+                  }
+        }
+      );
+      const accessToken = response?.data?.accessToken;
+      const roles = response?.data?.roles;
+      setAuth({username, password, roles, accessToken});
+      console.log(response);
+      navigate(whereUserCameFrom, {replace: true});
+    } catch (error) {
+      console.log(error);
+      // const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
+      // console.log(fieldEntryAlreadyInUse);
+    }
   };
 
   return (
-    <>
-    {success ? (
-      <Container className="customContainer justify-content-md-center">
-        <Card className="formCard mb-3">
-          <Title title="You are logged in!"/>
-          <Row className="justify-content-md-center mb-3">
-            <Link className="redirectLink line" to="/">Go to Home</Link>
-          </Row>
-        </Card>
-      </Container>
-    ) : (
       <Container className="customContainer justify-content-md-center">
         <Card className="formCard mb-3">
           <Title title="Sign In" />
           <Form noValidate onSubmit={handleSubmit}>
             <Row className="justify-content-md-center mb-3">
-              <TextInput label="Email" controlId="customValidationEmail" validationFunction={validateEmail} formSubmitted={formSubmitted} errorText={"Please enter your email."} input={email} setInput={setEmail}/>
+              <TextInput label="Email" controlId="customValidationEmail" validationFunction={validateUsername} formSubmitted={formSubmitted} errorText={"Please enter your email."} input={username} setInput={setUsername}/>
               <PasswordInput label="Password" controlId="customValidationPassword" validationFunction={validatePassword} formSubmitted={formSubmitted} errorText={"Please enter your password."} password={password} setPassword={setPassword}/>
               {/* <Button className="signInButton" md="3" type="submit" >Sign In</Button> */}
             </Row>
@@ -68,8 +77,6 @@ const Login = () => {
           </Row>
         </Card>
       </Container>
-    )}
-    </>
   );
 };
   

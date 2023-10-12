@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Cookies } from 'react-cookie';
+import useLocalStorage from 'use-local-storage'
 import "./App.css";
 import "./styles/styles.css";
 import Navbar from './components/NavBar/NavBar';
 import { Routes, Route } from 'react-router-dom';
 import {About, Login, Annual, Teams, ReactHelper, Register, Home, Missing, Admin, Moderator, Unauthorised} from "./views/viewDirectory";
 import RequireAuth from './components/Auth/RequireAuth';
-import useLocalStorage from 'use-local-storage'
+import useAuth from "./hooks/useAuth"
+import axios from './api/axiosConfig';
 
 const ROLES = {
   'User': "ROLE_USER",
@@ -13,9 +16,31 @@ const ROLES = {
   'Admin': "ROLE_ADMIN",
 }
 
+const cookies = new Cookies();
+
 export function App() {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+
+  const { setAuth } = useAuth();
+  useEffect(() => {
+
+    const fetchAndSetData = async (accessToken) => {
+      try {
+        const response = await axios.get("api/user/restoreAuthDetails/" + accessToken);
+        const roles = response?.data?.roles;
+        const username = response?.data?.username;
+        setAuth({username, roles, accessToken})
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const accessToken = cookies.get('jwtAccessToken');
+    if (accessToken) {
+      fetchAndSetData(accessToken);
+    }
+  }, [setAuth]);
 
   return (
     <body className="app" data-theme={theme}>

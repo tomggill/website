@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Container, Card, Form, Row, Col, Button } from 'react-bootstrap';
+import { Cookies } from 'react-cookie';
+import { Container, Card, Form, Row, Button } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Title from "../components/Title/Title"
 import TextInput from '../components/FormComponents/TextInput';
@@ -8,6 +9,8 @@ import PasswordInput from '../components/FormComponents/PasswordInput';
 import useAuth from "../hooks/useAuth"
 import axios from '../api/axiosConfig'
 import "../styles/styles.css";
+
+const cookies = new Cookies();
 
 const Login = () => {
   const { setAuth } = useAuth();
@@ -47,15 +50,14 @@ const Login = () => {
           }
         }
       );
+      cookies.set('jwtAccessToken', response.data.accessToken, { path: '/' });
       const accessToken = response?.data?.accessToken;
       const roles = response?.data?.roles;
-      setAuth({username, password, roles, accessToken});
+      setAuth({username, roles, accessToken});
       console.log(response);
       navigate(whereUserCameFrom, {replace: true});
     } catch (error) {
       console.log(error);
-      // const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
-      // console.log(fieldEntryAlreadyInUse);
     }
   };
 

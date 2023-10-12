@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.tomgill.webapplication.models.ERole;
 import dev.tomgill.webapplication.models.Role;
 import dev.tomgill.webapplication.models.User;
-import dev.tomgill.webapplication.payload.request.LogOutRequest;
 import dev.tomgill.webapplication.payload.request.LoginRequest;
 import dev.tomgill.webapplication.payload.request.SignUpRequest;
 import dev.tomgill.webapplication.payload.response.MessageResponse;
@@ -150,20 +149,29 @@ public class AuthController {
 
     return ResponseEntity.status(HttpStatus.OK).body(new MessageResponse("User registered successfully!"));
   }
-  
+
   @PostMapping("/signout")
-  public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logoutRequest) {
-    // Validate JWT Access Token
-    String accessToken = logoutRequest.getAccessToken();
-    if (!jwtUtils.validateJwtToken(accessToken)) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new MessageResponse("JWT accessToken is Invalid."));
-    }
-    System.out.println(jwtUtils.getUserNameFromJwtToken(accessToken));
+  public ResponseEntity<?> logoutUser() {
 
     ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
     return ResponseEntity.status(HttpStatus.OK)
         .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
         .body(new MessageResponse("You've been signed out!"));
   }
+  
+  // @PostMapping("/signout")
+  // public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logoutRequest) {
+  //   // Validate JWT Access Token
+  //   String accessToken = logoutRequest.getAccessToken();
+  //   if (!jwtUtils.validateJwtToken(accessToken)) {
+  //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+  //       .body(new MessageResponse("JWT accessToken is Invalid."));
+  //   }
+  //   System.out.println(jwtUtils.getUserNameFromJwtToken(accessToken));
+
+  //   ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
+  //   return ResponseEntity.status(HttpStatus.OK)
+  //       .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+  //       .body(new MessageResponse("You've been signed out!"));
+  // }
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Card, Container, Form, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from '../api/axiosConfig';
 import PasswordInput from '../components/FormComponents/PasswordInput';
@@ -45,9 +45,7 @@ const Register = () => {
       setSuccess(true);
       console.log(JSON.stringify(response));
     } catch (error) {
-      console.log(error);
-      // const fieldEntryAlreadyInUse = error.response.data.match(EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX)[1];
-      // console.log(fieldEntryAlreadyInUse);
+      console.log(error.response.data);
     }
   };
 

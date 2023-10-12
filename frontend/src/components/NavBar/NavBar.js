@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCookies } from 'react-cookie';
+import { Cookies } from 'react-cookie';
 import {
   Nav,
   NavLink,
@@ -15,6 +15,7 @@ import {BiSun} from 'react-icons/bi'
 import useAuth from '../../hooks/useAuth';
 import axios from '../../api/axiosConfig';
 
+const cookies = new Cookies();
   
 const Navbar = () => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -28,16 +29,12 @@ const Navbar = () => {
 
   const signOut = async() => {
     try {
-      console.log(auth.accessToken);
-      const response = await axios.post('api/auth/signout', 
-        JSON.stringify({accessToken: auth?.accessToken}),
-        {
+      const response = await axios.post('api/auth/signout', {},
+      {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        }
       });
       console.log(response);
+      cookies.remove('jwtAccessToken');
       setAuth({});
     } catch (error) {
       console.log(error)

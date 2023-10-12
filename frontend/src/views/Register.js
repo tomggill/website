@@ -7,7 +7,7 @@ import TextInput from '../components/FormComponents/TextInput';
 import TextInputGroup from '../components/FormComponents/TextInputGroup';
 import Title from "../components/Title/Title";
 import "../styles/styles.css";
-import { EMAIL_REGEX, PASSWORD_REGEX, EXTRACT_DUPLICATE_FIELD_FROM_ERROR_REGEX } from '../utils/regex';
+import { EMAIL_REGEX, PASSWORD_REGEX } from '../utils/regex';
 
 const Register = () => {
   const [success, setSuccess] = useState(false);
@@ -36,8 +36,10 @@ const Register = () => {
       const response = await axios.post("api/auth/signup",
         JSON.stringify({firstname, lastname, username, password, email}),
         {
-          headers: {'Content-Type': 'application/json'
-                  }
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
       setSuccess(true);

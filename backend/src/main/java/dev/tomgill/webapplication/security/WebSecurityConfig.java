@@ -28,6 +28,9 @@ public class WebSecurityConfig {
   @Autowired
   private AuthEntryPointJwt unauthorizedHandler;
 
+  @Autowired
+  private CorsConfig corsConfig;
+
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter();
@@ -55,7 +58,7 @@ public class WebSecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(csrf -> csrf.disable())
+    http.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource())).csrf(csrf -> csrf.disable())
         .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> 
@@ -63,7 +66,7 @@ public class WebSecurityConfig {
               .requestMatchers("/api/test/**").permitAll()
               .anyRequest().authenticated()
         );
-    
+
     http.authenticationProvider(authenticationProvider());
 
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -33,15 +33,8 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axios.post("api/auth/signup",
-        JSON.stringify({firstname, lastname, username, password, email}),
-        {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }
-      );
+      const response = await axios.post("/api/auth/signup",
+        JSON.stringify({firstname, lastname, username, password, email}));
       setSuccess(true);
       console.log(JSON.stringify(response));
     } catch (error) {
@@ -75,7 +68,7 @@ const Register = () => {
       <Container className="customContainer justify-content-md-center">
         <Card className="formCard mb-3">
           <Title title="Your account has been registered!"/>
-          <Row className="justify-content-md-center mb-3">
+          <Row className="customRowClass mb-3">
             <Link className="redirectLink line" to="/login">Sign-In</Link>
           </Row>
         </Card>
@@ -85,21 +78,21 @@ const Register = () => {
       <Card className="formCard mb-3">
         <Title title="Create an Account" />
         <Form noValidate onSubmit={handleSubmit}>
-          <Row className="justify-content-md-center mb-3">
+          <Row className="customRowClass mb-3">
             <TextInput label="First Name" controlId="customValidationFirstName" errorText={"Please enter a valid first name."} validationFunction={validateName} formSubmitted={formSubmitted} input={firstname} setInput={setFirstName}/>
             <TextInput label="Last Name" controlId="customValidationLastName" errorText={"Please enter a valid last name."} validationFunction={validateName} formSubmitted={formSubmitted} input={lastname} setInput={setLastName}/>
             <TextInputGroup label="Username" controlId="customValidationUsername" inputGroupID="inputGroupAtPrepend" inputGroupSymbol="@" validationFunction={validateUserName} formSubmitted={formSubmitted} input={username} setInput={setUserName}/>
           </Row>
-          <Row className="justify-content-md-center mb-3">
+          <Row className="customRowClass mb-3">
             <TextInput label="Email" controlId="customValidationEmail" errorText={"Please enter a valid email."} validationFunction={validateEmail} formSubmitted={formSubmitted} input={email} setInput={setEmail}/>
             <PasswordInput label="Password" controlId="customValidationPassword" errorText="Your password must contain at least 8 characters, one uppercase letter, one number, and one special character." validationFunction={validatePassword} formSubmitted={formSubmitted} password={password} setPassword={setPassword}/>
             <PasswordInput label="Confirm Password" controlId="customValidationConfirmPassword" errorText="Both passwords must match" validationFunction={validateConfirmPassword} formSubmitted={formSubmitted} password={confirmPassword} setPassword={setConfirmPassword}/>
           </Row>
-          <Row className="justify-content-md-center mb-3">
+          <Row className="customRowClass mb-3">
             <Button className="registerButton" md="2" type="submit" >Register</Button>
           </Row>
         </Form>
-        <Row className="justify-content-md-center mb-3">
+        <Row className="customRowClass mb-3">
           <p style={{textAlign: "center", marginBottom: "0"}}>Already have an account?</p>
           <Link className="redirectLink line" to="/login">Sign-In</Link>
         </Row>

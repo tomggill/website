@@ -2,18 +2,23 @@ package dev.tomgill.webapplication.security.jwt;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
 
 import dev.tomgill.webapplication.models.User;
+import dev.tomgill.webapplication.repository.UserRepository;
 import dev.tomgill.webapplication.security.services.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -35,6 +40,9 @@ public class JwtUtils {
   @Value("${tomgill.app.jwtRefreshCookieName}")
   private String jwtRefreshCookie;
 
+  @Autowired
+  UserRepository userRepository;
+
   public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
     String jwt = generateTokenFromUsername(userPrincipal.getUsername());   
     return generateCookie(jwtCookie, jwt, "/api");
@@ -46,7 +54,7 @@ public class JwtUtils {
   }
 
   public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
-    return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
+    return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth");
   }
 
   public String getJwtFromCookies(HttpServletRequest request) {
@@ -63,7 +71,7 @@ public class JwtUtils {
   }
 
   public ResponseCookie getCleanJwtRefreshCookie() {
-    ResponseCookie cookie = ResponseCookie.from(jwtRefreshCookie, null).path("/api/auth/refreshtoken").build();
+    ResponseCookie cookie = ResponseCookie.from(jwtRefreshCookie, null).path("/api/auth").build();
     return cookie;
   }
 
@@ -93,12 +101,16 @@ public class JwtUtils {
     return false;
   }
   
-  public String generateTokenFromUsername(String username) {   
+  public String generateTokenFromUsername(String username) {
+    User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+    List<String> roles = user.getRoles().stream().map(role -> role.getName().toString()).collect(Collectors.toList());
+
     return Jwts.builder()
               .setSubject(username)
               .setIssuedAt(new Date())
               .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
               .signWith(key(), SignatureAlgorithm.HS256)
+              .claim("userRoles", roles)
               .compact();
   }
 

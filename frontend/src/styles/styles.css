@@ -56,6 +56,14 @@
   border-bottom-right-radius: 0;
 }
 
+.customRowClass {
+  justify-content: center;
+}
+
+.persistCheck {
+  align-items: center;
+}
+
 .registerButton {
   font-weight: bold;
   background: var(--background);

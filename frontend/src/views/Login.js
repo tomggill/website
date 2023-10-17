@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
-import { Cookies } from 'react-cookie';
-import { Container, Card, Form, Row, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { Container, Card, Form, Row, Col, Button, FormCheck } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Title from "../components/Title/Title"
 import TextInput from '../components/FormComponents/TextInput';
@@ -10,10 +9,8 @@ import useAuth from "../hooks/useAuth"
 import axios from '../api/axiosConfig'
 import "../styles/styles.css";
 
-const cookies = new Cookies();
-
 const Login = () => {
-  const { setAuth } = useAuth();
+  const { setAuth, persist, setPersist } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,11 +22,11 @@ const Login = () => {
 
   const validateUsername = (username) => {
     return username.trim();
-  }
+  };
 
   const validatePassword = (password) => {
     return password;
-  }
+  };
 
   const handleSubmit =  async (event) => {
     event.preventDefault();
@@ -41,41 +38,45 @@ const Login = () => {
       return;
     }
     try {
-      const response = await axios.post("api/auth/signin",
-        JSON.stringify({username, password}),
-        { 
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        }
-      );
-      cookies.set('jwtAccessToken', response.data.accessToken, { path: '/' });
-      const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      setAuth({username, roles, accessToken});
+      const response = await axios.post("/api/auth/signin", JSON.stringify({username, password}));
       console.log(response);
+      const accessToken = response?.data?.accessToken;
+      setAuth({username, accessToken});
       navigate(whereUserCameFrom, {replace: true});
     } catch (error) {
       console.log(error);
     }
   };
 
+  const togglePersist = () => {
+    setPersist(prev => !prev);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("persist", persist);
+  }, [persist])
+
+
+
   return (
       <Container className="customContainer justify-content-md-center">
         <Card className="formCard mb-3">
           <Title title="Sign In" />
           <Form noValidate onSubmit={handleSubmit}>
-            <Row className="justify-content-md-center mb-3">
+            <Row className="customRowClass mb-3">
               <TextInput label="Email" controlId="customValidationEmail" validationFunction={validateUsername} formSubmitted={formSubmitted} errorText={"Please enter your email."} input={username} setInput={setUsername}/>
               <PasswordInput label="Password" controlId="customValidationPassword" validationFunction={validatePassword} formSubmitted={formSubmitted} errorText={"Please enter your password."} password={password} setPassword={setPassword}/>
-              {/* <Button className="signInButton" md="3" type="submit" >Sign In</Button> */}
             </Row>
-            <Row className="justify-content-md-center mb-3">
-              <Button className="signInButton" md="2" type="submit" >Sign In</Button>
+            <Row className="customRowClass mb-3">
+              <Col md="4">
+                <FormCheck reverse className="persistCheck" type="switch" label="Remember Details?" onChange={togglePersist} checked={persist}/>
+              </Col>
+            </Row>
+            <Row className="customRowClass mb-3">
+              <Button className="signInButton justify-content-md-center" md="2" type="submit" >Sign In</Button>
             </Row>
           </Form>
-          <Row className="justify-content-md-center mb-3">
+          <Row className="customRowClass mb-3">
             <p style={{textAlign: "center", marginBottom: "0"}}>Need an account?</p>
             <Link className="redirectLink line" to="/register">Register</Link>
           </Row>

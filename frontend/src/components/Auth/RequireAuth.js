@@ -1,12 +1,17 @@
 import { useLocation, Navigate, Outlet } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 import useAuth from "../../hooks/useAuth";
 
 const RequireAuth = ({ allowedRoles }) => {
   const { auth } = useAuth();
   const location = useLocation();
 
+  const decoded = auth?.accessToken ? jwt_decode(auth.accessToken) : undefined;
+
+  const roles = decoded?.userRoles || [];
+
   return (
-    auth?.roles?.find(role => allowedRoles.includes(role))
+    roles.find(role => allowedRoles.includes(role))
         ? <Outlet />
         : auth?.username
               ? <Navigate to="/unauthorised" state={{ from: location }} replace />

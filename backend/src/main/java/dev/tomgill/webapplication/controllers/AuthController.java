@@ -35,8 +35,9 @@ import dev.tomgill.webapplication.models.Role;
 import dev.tomgill.webapplication.models.User;
 import dev.tomgill.webapplication.payload.request.LoginRequest;
 import dev.tomgill.webapplication.payload.request.SignUpRequest;
+import dev.tomgill.webapplication.payload.response.AccessTokenResponse;
 import dev.tomgill.webapplication.payload.response.MessageResponse;
-import dev.tomgill.webapplication.payload.response.UserInfoResponse;
+import dev.tomgill.webapplication.payload.response.UserSignInResponse;
 import dev.tomgill.webapplication.repository.RoleRepository;
 import dev.tomgill.webapplication.repository.UserRepository;
 import dev.tomgill.webapplication.security.jwt.JwtUtils;
@@ -77,10 +78,6 @@ public class AuthController {
 
     ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
-    List<String> roles = userDetails.getAuthorities().stream()
-        .map(item -> item.getAuthority())
-        .collect(Collectors.toList());
-
     RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
     
     ResponseCookie jwtRefreshCookie = jwtUtils.generateRefreshJwtCookie(refreshToken.getToken());
@@ -90,13 +87,7 @@ public class AuthController {
     return ResponseEntity.status(HttpStatus.OK)
         .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
         .header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
-        .body(new UserInfoResponse(userDetails.getId(),
-                                   userDetails.getFirstname(),
-                                   userDetails.getLastname(),
-                                   userDetails.getUsername(),
-                                   userDetails.getEmail(),
-                                   roles,
-                                   accessToken));
+        .body(new UserSignInResponse(userDetails.getUsername(), accessToken));
   }
 
   @PostMapping("/signup")
@@ -163,7 +154,12 @@ public class AuthController {
   }
 
   @PostMapping("/signout")
-  public ResponseEntity<?> logoutUser() {
+  public ResponseEntity<?> logoutUser(HttpServletRequest request) {
+    String refreshTokenString = jwtUtils.getJwtRefreshFromCookies(request);
+    refreshTokenService.findByToken(refreshTokenString)
+        .map(refreshTokenService::verifyExpiration)
+        .orElseThrow(() -> new TokenRefreshException(refreshTokenString, "Refresh token is not in database!"));
+    
     Object principle = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     if (principle.toString() != "anonymousUser") {      
       String userId = ((UserDetailsImpl) principle).getId();
@@ -179,21 +175,6 @@ public class AuthController {
         .body(new MessageResponse("You've been signed out!"));
   }
   
-  // @PostMapping("/signout")
-  // public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logoutRequest) {
-  //   // Validate JWT Access Token
-  //   String accessToken = logoutRequest.getAccessToken();
-  //   if (!jwtUtils.validateJwtToken(accessToken)) {
-  //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-  //       .body(new MessageResponse("JWT accessToken is Invalid."));
-  //   }
-  //   System.out.println(jwtUtils.getUserNameFromJwtToken(accessToken));
-
-  //   ResponseCookie jwtCookie = jwtUtils.getCleanJwtCookie();
-  //   return ResponseEntity.status(HttpStatus.OK)
-  //       .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-  //       .body(new MessageResponse("You've been signed out!"));
-  // }
   @PostMapping("/refreshtoken")
   public ResponseEntity<?> refreshtoken(HttpServletRequest request) {
     String refreshToken = jwtUtils.getJwtRefreshFromCookies(request);
@@ -204,15 +185,15 @@ public class AuthController {
           .map(RefreshToken::getUser)
           .map(user -> {
             ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(user);
-            
-            return ResponseEntity.ok()
+
+            return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(new MessageResponse("Token is refreshed successfully!"));
+                .body(new AccessTokenResponse(jwtCookie.getValue().toString()));
           })
           .orElseThrow(() -> new TokenRefreshException(refreshToken,
               "Refresh token is not in database!"));
     }
     
-    return ResponseEntity.badRequest().body(new MessageResponse("Refresh Token is empty!"));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MessageResponse("Refresh Token is empty!"));
   }
 }

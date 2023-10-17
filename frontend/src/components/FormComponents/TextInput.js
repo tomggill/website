@@ -9,8 +9,9 @@ const TextInput = ({label, controlId, errorText = "", validationFunction, formSu
   return (
     <Form.Group as={Col} md="3" controlId={controlId}>
       <Form.Label>{label}</Form.Label>
-      <Form.Control 
+      <Form.Control
         required
+        className="customTextBox"
         value={input} 
         onChange={(e) => setInput(e.target.value)} 
         {...isValidProp}

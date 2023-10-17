@@ -1,5 +1,4 @@
 import React from 'react';
-import { Cookies } from 'react-cookie';
 import {
   Nav,
   NavLink,
@@ -13,32 +12,21 @@ import useLocalStorage from 'use-local-storage';
 import {GiMoonBats} from 'react-icons/gi';
 import {BiSun} from 'react-icons/bi'
 import useAuth from '../../hooks/useAuth';
-import axios from '../../api/axiosConfig';
-
-const cookies = new Cookies();
+import useLogout from '../../hooks/useLogout';
   
 const Navbar = () => {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
-  const { auth, setAuth } = useAuth();
+  const { auth } = useAuth();
+  const logout = useLogout();
 
   const switchTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(newTheme);
   }
 
-  const signOut = async() => {
-    try {
-      const response = await axios.post('api/auth/signout', {},
-      {
-        withCredentials: true,
-      });
-      console.log(response);
-      cookies.remove('jwtAccessToken');
-      setAuth({});
-    } catch (error) {
-      console.log(error)
-    }
+  const signOut = async () => {
+    await logout();
   }
 
   return (

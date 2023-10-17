@@ -1,17 +1,14 @@
 import React from 'react';
-  
+import Users from '../components/UserComponents/Users';
+
 const Admin = () => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'Right',
-        alignItems: 'Right',
-        height: '100vh'
-      }}
-    >
-      <h1>Admin Page</h1>
-    </div>
+    <section>
+      <h1>Admins Page</h1>
+      <br />
+      <Users />
+      <br />
+    </section>
   );
 };
   

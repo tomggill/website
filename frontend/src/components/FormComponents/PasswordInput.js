@@ -17,7 +17,7 @@ const PasswordInput = ({label, controlId, errorText = "", validationFunction, fo
       <Form.Label>{label}</Form.Label>
       <InputGroup hasValidation >
         <Form.Control 
-          className="rounded-left" 
+          className="rounded-left"
           required
           value={password} 
           onChange={(e) => setPassword(e.target.value)} 

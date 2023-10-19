@@ -1,10 +1,14 @@
 import React from 'react';
-import {Col, Form} from 'react-bootstrap';
-import "../../styles/styles.css";
+import { Col, Form } from 'react-bootstrap';
+import '../../styles/styles.css';
 
-const TextInput = ({label, controlId, errorText = "", validationFunction, formSubmitted = true, input, setInput}) => {
-  const isValidProp = validationFunction ? { isValid: validationFunction(input) && formSubmitted} : {};
-  const isInvalidPop = validationFunction ? { isInvalid: !validationFunction(input) && formSubmitted} : {};
+function TextInput({
+  label, controlId, errorText = '', validationFunction, formSubmitted = true, input, setInput,
+}) {
+  const isValidProp = validationFunction
+    ? { isValid: validationFunction(input) && formSubmitted } : {};
+  const isInvalidPop = validationFunction
+    ? { isInvalid: !validationFunction(input) && formSubmitted } : {};
 
   return (
     <Form.Group as={Col} md="3" controlId={controlId}>
@@ -12,8 +16,8 @@ const TextInput = ({label, controlId, errorText = "", validationFunction, formSu
       <Form.Control
         required
         className="customTextBox"
-        value={input} 
-        onChange={(e) => setInput(e.target.value)} 
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
         {...isValidProp}
         {...isInvalidPop}
         type="text"

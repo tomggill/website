@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-  
-const Unauthorised = () => {
+
+function Unauthorised() {
   const navigate = useNavigate();
 
   const goBack = () => navigate(-1);
@@ -11,13 +11,13 @@ const Unauthorised = () => {
         display: 'flex',
         justifyContent: 'Right',
         alignItems: 'Right',
-        height: '100vh'
+        height: '100vh',
       }}
     >
       <h1>You are unauthorised to access these resources.</h1>
-      <button onClick={goBack}>Go Back</button>
+      <button type="button" onClick={goBack}>Go Back</button>
     </div>
   );
-};
-  
+}
+
 export default Unauthorised;

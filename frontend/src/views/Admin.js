@@ -1,7 +1,7 @@
 import React from 'react';
 import Users from '../components/UserComponents/Users';
 
-const Admin = () => {
+function Admin() {
   return (
     <section>
       <h1>Admins Page</h1>
@@ -10,6 +10,6 @@ const Admin = () => {
       <br />
     </section>
   );
-};
-  
+}
+
 export default Admin;

@@ -5,9 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import axios from './api/axiosConfig';
-import {
-  App,
-} from './App';
+import App from './App';
 import { AuthProvider } from './context/AuthProvider';
 
 const setReactDevTools = async () => {

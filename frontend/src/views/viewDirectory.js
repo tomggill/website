@@ -1,13 +1,15 @@
-import About from "./About.js";
-import Annual from "./Annual.js";
-import ReactHelper from "./ReactHelper.js";
-import Home from "./Home.js";
-import Register from "./Register.js";
-import Teams from "./Teams.js";
-import Login from "./Login.js";
-import Missing from "./Missing.js";
-import Admin from "./Admin.js";
-import Moderator from "./Moderator.js";
-import Unauthorised from "./Unauthorised.js";
+import About from './About';
+import Annual from './Annual';
+import ReactHelper from './ReactHelper';
+import Home from './Home';
+import Register from './Register';
+import Teams from './Teams';
+import Login from './Login';
+import Missing from './Missing';
+import Admin from './Admin';
+import Moderator from './Moderator';
+import Unauthorised from './Unauthorised';
 
-export {About, Annual, ReactHelper, Home, Register, Teams, Login, Missing, Admin, Moderator, Unauthorised};
+export {
+  About, Annual, ReactHelper, Home, Register, Teams, Login, Missing, Admin, Moderator, Unauthorised,
+};

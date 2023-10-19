@@ -1,18 +1,18 @@
 import React from 'react';
-  
-const Missing = () => {
+
+function Missing() {
   return (
     <div
       style={{
         display: 'flex',
         justifyContent: 'Right',
         alignItems: 'Right',
-        height: '100vh'
+        height: '100vh',
       }}
     >
       <h1>This page is missing...</h1>
     </div>
   );
-};
-  
+}
+
 export default Missing;

@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TechniqueCard snapshot test 1`] = `
+<div
+  className="customCard mb-3 card"
+>
+  <div
+    className="card-body"
+  >
+    <div
+      className="customCardTitle card-title h5"
+    >
+      cardTitleTest
+    </div>
+    <p
+      className="card-text"
+    />
+  </div>
+</div>
+`;

@@ -2,9 +2,21 @@ import React from 'react';
 import { Col, Form } from 'react-bootstrap';
 import '../../styles/styles.css';
 
-function TextInput({
-  label, controlId, errorText = '', validationFunction, formSubmitted = true, input, setInput,
-}) {
+interface TextInputProps {
+  label: string;
+  controlId: string;
+  errorText: string;
+  validationFunction: (text: string) => boolean;
+  formSubmitted: boolean;
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function TextInput(props: TextInputProps) {
+  const {
+    label, controlId, errorText = '', validationFunction, formSubmitted = true, input, setInput,
+  } = props;
+
   const isValidProp = validationFunction
     ? { isValid: validationFunction(input) && formSubmitted } : {};
   const isInvalidPop = validationFunction

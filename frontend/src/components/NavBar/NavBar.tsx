@@ -9,6 +9,7 @@ import {
   NavMenu,
   NavBtn,
   NavBtnLink,
+  SignOutButton,
   ThemeButton,
 } from './NavBarElements';
 import useAuth from '../../hooks/useAuth';
@@ -50,11 +51,11 @@ function Navbar() {
       <NavBtn>
         <ThemeButton onClick={switchTheme}>{theme === 'light' ? <BiSun size={24} /> : <GiMoonBats size={24} />}</ThemeButton>
         { auth?.accessToken ? (
-          <NavBtnLink onClick={signOut}>Sign Out</NavBtnLink>
+          <SignOutButton data-testid="navLinkSignOut" onClick={signOut}>Sign Out</SignOutButton>
         ) : (
           <>
-            <NavBtnLink to="/register">Sign Up</NavBtnLink>
-            <NavBtnLink to="/login">Sign In</NavBtnLink>
+            <NavBtnLink data-testid="navLinkSignUp" to="/register">Sign Up</NavBtnLink>
+            <NavBtnLink data-testid="navLinkSignIn" to="/login">Sign In</NavBtnLink>
           </>
         )}
       </NavBtn>

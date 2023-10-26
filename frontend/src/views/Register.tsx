@@ -3,6 +3,7 @@ import {
   Button, Card, Container, Form, Row,
 } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import axios from '../api/axiosConfig';
 import PasswordInput from '../components/FormComponents/PasswordInput';
 import TextInput from '../components/FormComponents/TextInput';
@@ -21,17 +22,18 @@ function Register() {
   const [lastname, setLastName] = useState('');
   const [username, setUserName] = useState('');
 
-  const validateName = (nameToCheck) => (nameToCheck.trim().length >= 3);
+  const validateName = (nameToCheck: string) => (nameToCheck.trim().length >= 3);
 
-  const validateUserName = (usernameToCheck) => (usernameToCheck.trim().length >= 3);
+  const validateUserName = (usernameToCheck: string) => (usernameToCheck.trim().length >= 3);
 
-  const validateEmail = (emailToCheck) => EMAIL_REGEX.test(emailToCheck);
+  const validateEmail = (emailToCheck: string) => EMAIL_REGEX.test(emailToCheck);
 
-  const validatePassword = (passwordToCheck) => PASSWORD_REGEX.test(passwordToCheck);
+  const validatePassword = (passwordToCheck: string) => PASSWORD_REGEX.test(passwordToCheck);
 
-  const validateConfirmPassword = (confirmPasswordToCheck) => confirmPasswordToCheck === password;
+  const validateConfirmPassword = (confirmPasswordToCheck: string) => confirmPasswordToCheck
+                                                                      === password;
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validPassword = validatePassword(password);
     const validConfirmPassword = validateConfirmPassword(confirmPassword);
@@ -54,8 +56,10 @@ function Register() {
       );
       setSuccess(true);
       console.log(JSON.stringify(response));
-    } catch (error) {
-      console.log(error.response.data);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        console.log(error.response?.data);
+      }
     }
   };
 
@@ -77,7 +81,7 @@ function Register() {
             <Row className="customRowClass mb-3">
               <TextInput label="First Name" controlId="customValidationFirstName" errorText="Please enter a valid first name." validationFunction={validateName} formSubmitted={formSubmitted} input={firstname} setInput={setFirstName} />
               <TextInput label="Last Name" controlId="customValidationLastName" errorText="Please enter a valid last name." validationFunction={validateName} formSubmitted={formSubmitted} input={lastname} setInput={setLastName} />
-              <TextInputGroup label="Username" controlId="customValidationUsername" inputGroupID="inputGroupAtPrepend" inputGroupSymbol="@" validationFunction={validateUserName} formSubmitted={formSubmitted} input={username} setInput={setUserName} />
+              <TextInputGroup label="Username" controlId="customValidationUsername" inputGroupId="inputGroupAtPrepend" inputGroupSymbol="@" validationFunction={validateUserName} formSubmitted={formSubmitted} input={username} setInput={setUserName} />
             </Row>
             <Row className="customRowClass mb-3">
               <TextInput label="Email" controlId="customValidationEmail" errorText="Please enter a valid email." validationFunction={validateEmail} formSubmitted={formSubmitted} input={email} setInput={setEmail} />
@@ -85,7 +89,7 @@ function Register() {
               <PasswordInput label="Confirm Password" controlId="customValidationConfirmPassword" errorText="Both passwords must match" validationFunction={validateConfirmPassword} formSubmitted={formSubmitted} password={confirmPassword} setPassword={setConfirmPassword} />
             </Row>
             <Row className="customRowClass mb-3">
-              <Button className="registerButton" md="2" type="submit">Register</Button>
+              <Button className="registerButton" type="submit">Register</Button>
             </Row>
           </Form>
           <Row className="customRowClass mb-3">

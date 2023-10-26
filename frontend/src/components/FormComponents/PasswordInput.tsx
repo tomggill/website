@@ -5,9 +5,20 @@ import {
 } from 'react-bootstrap';
 import '../../styles/styles.css';
 
-function PasswordInput({
-  label, controlId, errorText = '', validationFunction, formSubmitted = true, password, setPassword,
-}) {
+interface PasswordInputProps {
+  label: string;
+  controlId: string;
+  errorText: string;
+  validationFunction: (text: string) => boolean;
+  formSubmitted: boolean;
+  password: string;
+  setPassword: React.Dispatch<React.SetStateAction<string>>;
+}
+function PasswordInput(props: PasswordInputProps) {
+  const {
+    label, controlId, errorText = '', validationFunction, formSubmitted = true, password, setPassword,
+  } = props;
+
   const [passwordShown, setPasswordShown] = useState(false);
   const isValidProp = validationFunction
     ? { isValid: validationFunction(password) && formSubmitted } : {};

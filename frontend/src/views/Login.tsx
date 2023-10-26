@@ -21,11 +21,11 @@ function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const validateUsername = (usernameToCheck) => usernameToCheck.trim() !== '';
+  const validateUsername = (usernameToCheck: string) => usernameToCheck.trim() !== '';
 
-  const validatePassword = (passwordToCheck) => passwordToCheck !== '';
+  const validatePassword = (passwordToCheck: string) => passwordToCheck !== '';
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const validPassword = validatePassword(password);
     const validUsername = validateUsername(username);
@@ -37,7 +37,7 @@ function Login() {
     try {
       const response = await axios.post('/api/auth/signin', JSON.stringify({ username, password }));
       console.log(response);
-      const accessToken = response?.data?.accessToken;
+      const accessToken: string = response?.data?.accessToken;
       setAuth({ username, accessToken });
       navigate(whereUserCameFrom, { replace: true });
     } catch (error) {
@@ -50,7 +50,7 @@ function Login() {
   };
 
   useEffect(() => {
-    localStorage.setItem('persist', persist);
+    localStorage.setItem('persist', String(persist));
   }, [persist]);
 
   return (
@@ -68,7 +68,7 @@ function Login() {
             </Col>
           </Row>
           <Row className="customRowClass mb-3">
-            <Button className="signInButton justify-content-md-center" md="2" type="submit">Sign In</Button>
+            <Button className="signInButton justify-content-md-center" type="submit">Sign In</Button>
           </Row>
         </Form>
         <Row className="customRowClass mb-3">

@@ -1,14 +1,18 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, cleanup } from '@testing-library/react';
 import renderer from 'react-test-renderer';
 import '@testing-library/jest-dom';
 import TechniqueCard from './TechniqueCard';
 
+afterEach(() => {
+  cleanup();
+});
+
 test('Renders TechniqueCard component', () => {
   const cardTitle = 'cardTitleTest';
   render(<TechniqueCard cardTitle={cardTitle} />);
-  const linkElement = screen.getByText(cardTitle);
-  expect(linkElement).toBeInTheDocument();
+  const techniqueCardElement = screen.getByText(cardTitle);
+  expect(techniqueCardElement).toBeInTheDocument();
 });
 
 test('TechniqueCard snapshot test', () => {

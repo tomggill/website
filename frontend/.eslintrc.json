@@ -26,6 +26,7 @@
     },
     "rules": {
         "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx", ".ts"] }],
+        "react/destructuring-assignment": "off",
         "no-param-reassign": [2, { "props": false }],
         "react/prop-types": "off",
         "no-nested-ternary": "off",

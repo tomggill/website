@@ -2,15 +2,26 @@ import React from 'react';
 import { Col, Form, InputGroup } from 'react-bootstrap';
 import '../../styles/styles.css';
 
-function TextInputGroup({
-  label, controlId, inputGroupID, inputGroupSymbol,
-  validationFunction, formSubmitted, input, setInput,
-}) {
+interface TextInputGroupProps {
+  label: string;
+  controlId: string;
+  inputGroupId: string;
+  inputGroupSymbol: string;
+  validationFunction: (text: string) => boolean;
+  formSubmitted: boolean;
+  input: string;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+}
+function TextInputGroup(props: TextInputGroupProps) {
+  const {
+    controlId, label, inputGroupId, inputGroupSymbol,
+    validationFunction, formSubmitted, input, setInput,
+  } = props;
   return (
     <Form.Group as={Col} md="3" controlId={controlId}>
       <Form.Label>{label}</Form.Label>
       <InputGroup hasValidation>
-        <InputGroup.Text id={inputGroupID}>{inputGroupSymbol}</InputGroup.Text>
+        <InputGroup.Text id={inputGroupId}>{inputGroupSymbol}</InputGroup.Text>
         <Form.Control
           required
           value={input}
@@ -19,7 +30,7 @@ function TextInputGroup({
           isInvalid={!validationFunction(input) && formSubmitted}
           type="text"
           placeholder={label}
-          aria-describedby={inputGroupID}
+          aria-describedby={inputGroupId}
         />
         <Form.Control.Feedback type="invalid">Please enter a username.</Form.Control.Feedback>
       </InputGroup>
